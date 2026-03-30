@@ -90,6 +90,26 @@
         .btn-search:active {
             transform: translateY(0);
         }
+        .btn-back {
+            display: inline-block;
+            padding: 12px 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn-back:active {
+            transform: translateY(0);
+        }
         .result-box {
             background: white;
             border-radius: 16px;
@@ -376,6 +396,10 @@
                     </table>
                 </div>
             </div>
+            
+            <div style="text-align: center;">
+                <button class="btn-back" onclick="goBack()">🔙 返回重新查询</button>
+            </div>
         </div>
         
         <div class="footer">
@@ -548,6 +572,23 @@
         document.getElementById('searchId').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') doSearch();
         });
+        
+        // 返回初始页面
+        function goBack() {
+            const resultBox = document.getElementById('resultBox');
+            const errorMsg = document.getElementById('errorMsg');
+            
+            // 隐藏结果和错误信息
+            resultBox.classList.remove('show');
+            errorMsg.classList.remove('show');
+            
+            // 清空输入框
+            document.getElementById('searchName').value = '';
+            document.getElementById('searchId').value = '';
+            
+            // 聚焦到姓名输入框
+            document.getElementById('searchName').focus();
+        }
     </script>
 </body>
 </html>
