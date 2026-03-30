@@ -128,18 +128,59 @@
             font-size: 12px;
             margin-top: 8px;
         }
-        .scores-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
+        /* AI考核区域 */
+        .score-section {
             margin-bottom: 25px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .score-section.ai-section {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            border: 1px solid #d0d7de;
+        }
+        .score-section.doc-section {
+            background: linear-gradient(135deg, #fff9f0 0%, #fef3e2 100%);
+            border: 1px solid #f0d9b5;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .ai-section .section-title {
+            color: #0969da;
+        }
+        .doc-section .section-title {
+            color: #cf4a02;
+        }
+        .section-emoji {
+            font-size: 20px;
+        }
+        .scores-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        @media (max-width: 600px) {
+            .scores-row {
+                grid-template-columns: 1fr;
+            }
         }
         .score-card {
-            background: #f8f9fa;
+            background: white;
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .ai-section .score-card {
+            border-left: 4px solid #0969da;
+        }
+        .doc-section .score-card {
+            border-left: 4px solid #cf4a02;
         }
         .score-card h4 {
             font-size: 13px;
@@ -155,6 +196,12 @@
         .score-value.null {
             color: #999;
             font-size: 18px;
+        }
+        .ai-section .score-value {
+            color: #0969da;
+        }
+        .doc-section .score-value {
+            color: #cf4a02;
         }
         .subordinates-section {
             margin-top: 30px;
@@ -255,15 +302,15 @@
             <div class="alert alert-error" id="errorMsg"></div>
             <div class="input-group">
                 <div class="input-wrapper">
-                    <label for="searchName">姓名</label>
+                    <label for="searchName">👤 姓名</label>
                     <input type="text" id="searchName" placeholder="请输入姓名">
                 </div>
                 <div class="input-wrapper">
-                    <label for="searchId">员工工号</label>
+                    <label for="searchId">🆔 员工工号</label>
                     <input type="text" id="searchId" placeholder="请输入工号">
                 </div>
             </div>
-            <button class="btn-search" onclick="doSearch()">查询成绩</button>
+            <button class="btn-search" onclick="doSearch()">🔍 查询成绩</button>
         </div>
         
         <div class="result-box" id="resultBox">
@@ -273,27 +320,44 @@
                 <span class="role-badge" id="userRole">-</span>
             </div>
             
-            <div class="scores-grid">
-                <div class="score-card">
-                    <h4>AI工具使用与岗位匹配性得分</h4>
-                    <div class="score-value" id="scoreAiMatch">-</div>
+            <!-- AI考核区域 -->
+            <div class="score-section ai-section">
+                <div class="section-title">
+                    <span class="section-emoji">🤖</span>
+                    <span>AI工具使用考核</span>
                 </div>
-                <div class="score-card">
-                    <h4>AI-月度绩效考核评分</h4>
-                    <div class="score-value" id="scoreAiKpi">-</div>
+                <div class="scores-row">
+                    <div class="score-card">
+                        <h4>AI工具使用与岗位匹配性得分</h4>
+                        <div class="score-value" id="scoreAiMatch">-</div>
+                    </div>
+                    <div class="score-card">
+                        <h4>AI-月度绩效考核评分</h4>
+                        <div class="score-value" id="scoreAiKpi">-</div>
+                    </div>
                 </div>
-                <div class="score-card">
-                    <h4>文档使用与岗位匹配性得分</h4>
-                    <div class="score-value" id="scoreDocMatch">-</div>
+            </div>
+            
+            <!-- 文档考核区域 -->
+            <div class="score-section doc-section">
+                <div class="section-title">
+                    <span class="section-emoji">📄</span>
+                    <span>协同文档使用考核</span>
                 </div>
-                <div class="score-card">
-                    <h4>文档-月度绩效考核评分</h4>
-                    <div class="score-value" id="scoreDocKpi">-</div>
+                <div class="scores-row">
+                    <div class="score-card">
+                        <h4>文档使用与岗位匹配性得分</h4>
+                        <div class="score-value" id="scoreDocMatch">-</div>
+                    </div>
+                    <div class="score-card">
+                        <h4>文档-月度绩效考核评分</h4>
+                        <div class="score-value" id="scoreDocKpi">-</div>
+                    </div>
                 </div>
             </div>
             
             <div class="subordinates-section" id="subSection" style="display:none;">
-                <h3>下属成员成绩明细 <span class="sub-count" id="subCount">0人</span></h3>
+                <h3>👥 下属成员成绩明细 <span class="sub-count" id="subCount">0人</span></h3>
                 <div style="overflow-x: auto;">
                     <table class="data-table">
                         <thead>
@@ -301,10 +365,10 @@
                                 <th>姓名</th>
                                 <th>工号</th>
                                 <th>六级部门</th>
-                                <th>AI匹配得分</th>
-                                <th>AI绩效评分</th>
-                                <th>文档匹配得分</th>
-                                <th>文档绩效评分</th>
+                                <th>🤖 AI匹配</th>
+                                <th>🤖 AI绩效</th>
+                                <th>📄 文档匹配</th>
+                                <th>📄 文档绩效</th>
                             </tr>
                         </thead>
                         <tbody id="subTableBody">
