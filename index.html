@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 年 1 月数智化考核指标成绩查询</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .search-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 20px;
+        }
+        .input-group {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .input-wrapper {
+            flex: 1;
+            min-width: 200px;
+        }
+        .input-wrapper label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .input-wrapper input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+        }
+        .btn-search {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-search:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn-search:active {
+            transform: translateY(0);
+        }
+        .result-box {
+            background: white;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .result-box.show {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .user-info {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+        }
+        .user-info h3 {
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+        .user-info p {
+            opacity: 0.9;
+            font-size: 14px;
+        }
+        .role-badge {
+            display: inline-block;
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-top: 8px;
+        }
+        .scores-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .score-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border-left: 4px solid #667eea;
+        }
+        .score-card h4 {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+        .score-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #333;
+        }
+        .score-value.null {
+            color: #999;
+            font-size: 18px;
+        }
+        .subordinates-section {
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+        .subordinates-section h3 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .subordinates-section h3::before {
+            content: "";
+            display: inline-block;
+            width: 4px;
+            height: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 2px;
+        }
+        .sub-count {
+            background: #667eea;
+            color: white;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .data-table th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 10px;
+            text-align: center;
+            font-weight: 600;
+        }
+        .data-table td {
+            padding: 12px 10px;
+            text-align: center;
+            border-bottom: 1px solid #eee;
+        }
+        .data-table tr:hover {
+            background: #f8f9fa;
+        }
+        .data-table tr:nth-child(even) {
+            background: #fafbfc;
+        }
+        .alert {
+            padding: 16px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+        .alert.show {
+            display: block;
+        }
+        .footer {
+            text-align: center;
+            color: rgba(255,255,255,0.7);
+            margin-top: 30px;
+            font-size: 12px;
+        }
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            .input-group {
+                flex-direction: column;
+            }
+            .data-table {
+                font-size: 12px;
+            }
+            .data-table th, .data-table td {
+                padding: 8px 6px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>2026 年 1 月数智化考核指标成绩查询</h1>
+            <p>请输入姓名和工号进行查询</p>
+        </div>
+        
+        <div class="search-box">
+            <div class="alert alert-error" id="errorMsg"></div>
+            <div class="input-group">
+                <div class="input-wrapper">
+                    <label for="searchName">姓名</label>
+                    <input type="text" id="searchName" placeholder="请输入姓名">
+                </div>
+                <div class="input-wrapper">
+                    <label for="searchId">员工工号</label>
+                    <input type="text" id="searchId" placeholder="请输入工号">
+                </div>
+            </div>
+            <button class="btn-search" onclick="doSearch()">查询成绩</button>
+        </div>
+        
+        <div class="result-box" id="resultBox">
+            <div class="user-info">
+                <h3 id="userName">-</h3>
+                <p id="userDept">-</p>
+                <span class="role-badge" id="userRole">-</span>
+            </div>
+            
+            <div class="scores-grid">
+                <div class="score-card">
+                    <h4>AI工具使用与岗位匹配性得分</h4>
+                    <div class="score-value" id="scoreAiMatch">-</div>
+                </div>
+                <div class="score-card">
+                    <h4>AI-月度绩效考核评分</h4>
+                    <div class="score-value" id="scoreAiKpi">-</div>
+                </div>
+                <div class="score-card">
+                    <h4>文档使用与岗位匹配性得分</h4>
+                    <div class="score-value" id="scoreDocMatch">-</div>
+                </div>
+                <div class="score-card">
+                    <h4>文档-月度绩效考核评分</h4>
+                    <div class="score-value" id="scoreDocKpi">-</div>
+                </div>
+            </div>
+            
+            <div class="subordinates-section" id="subSection" style="display:none;">
+                <h3>下属成员成绩明细 <span class="sub-count" id="subCount">0人</span></h3>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>工号</th>
+                                <th>六级部门</th>
+                                <th>AI匹配得分</th>
+                                <th>AI绩效评分</th>
+                                <th>文档匹配得分</th>
+                                <th>文档绩效评分</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 数智化考核系统 | 数据仅供参考</p>
+        </div>
+    </div>
+
+    <script>
+        // 嵌入成绩数据
+        const DATA = [{"name": "吴丹", "id": "202505260007", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "计算错误", "ai_match": 4.6, "ai_kpi": 7.0, "doc_match": 4.4, "doc_kpi": 12.4, "role": "manager"}, {"name": "张神杰", "id": "202403180004", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "莫启荣", "id": "L201308010004", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "苏慧", "id": "202510130005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 8.5, "role": "employee"}, {"name": "丁昊", "id": "202601040001", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "云与系统运维小组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 3.0, "doc_kpi": 8.0, "role": "employee"}, {"name": "胡镇", "id": "200310010001", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王悦", "id": "202505260002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "消费者与数智营销小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "杨光", "id": "202306010014", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "技术架构小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "姚智捷", "id": "202004160006", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智运营小组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "王寅", "id": "202011010004", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王韦", "id": "202111150002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数据中台小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "候小云", "id": "202405060005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "程文静", "id": "L202211140001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 2.5, "doc_kpi": 2.5, "role": "employee"}, {"name": "吴斌", "id": "202104120004", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "云与系统运维小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘红莉", "id": "201909160003", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "贝瑞研发组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 9.5, "role": "employee"}, {"name": "蒋冰倩", "id": "202504210003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "郭晓菁", "id": "202510130004", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "吴秋萍", "id": "201112120001", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "研发一组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "李晓波", "id": "200808010007", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "屠璐丹", "id": "202407010007", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "唐麒俊", "id": "202109130006", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "云与系统运维小组", "ai_match": 4.9, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陈文", "id": "201906170001", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "甜品饮料烘焙组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "李沫", "id": "200112010008", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陈彦溪", "id": "202210240002", "dept4": "餐饮群总部", "dept5": "业务洞察分析部", "dept6": "计算错误", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 7.5, "role": "employee"}, {"name": "袁吉祥", "id": "201904220819", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智门店小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "徐杨祯", "id": "202506030002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "云与系统运维小组", "ai_match": 4.9, "ai_kpi": 7.0, "doc_match": 2.5, "doc_kpi": 10.5, "role": "employee"}, {"name": "田正良", "id": "202002240001", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "研发二组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 2.0, "doc_kpi": 7.0, "role": "employee"}, {"name": "戴佳炜", "id": "202505060006", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "汪诗新", "id": "200901060001", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "研发一组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.2, "doc_kpi": 11.2, "role": "employee"}, {"name": "张晓丹", "id": "202104260255", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "消费者与数智营销小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "杨浩", "id": "202511030002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "技术架构小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "张凯芸", "id": "202506030003", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "消费者与数智营销小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "付奇", "id": "201101040004", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐营运推进及训练部", "ai_match": 4.7, "ai_kpi": 4.0, "doc_match": 3.5, "doc_kpi": 8.5, "role": "employee"}, {"name": "潘明玥", "id": "201707010101", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "范欢欢", "id": "201805010093", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐营运推进及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "郑建鑫", "id": "200805010005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐本地生活运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "李德伟", "id": "201207090202", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐事业本部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 11.5, "role": "employee"}, {"name": "叶欣", "id": "202312040001", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "陈己秀", "id": "201609200002", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "研发一组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "罗金林", "id": "201207100301", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐事业本部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 2.9, "doc_kpi": 7.9, "role": "employee"}, {"name": "顾天宇", "id": "202511170001", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "技术架构小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "范伟", "id": "200504010014", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "戚晓峰", "id": "202004270001", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "研发二组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.0, "doc_kpi": 11.0, "role": "employee"}, {"name": "厉诚才", "id": "201402170003", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智后勤小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "孙剑", "id": "200312290002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智后勤小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "高程", "id": "202109010015", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陈琳丽", "id": "201811150002", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "高宇", "id": "202405130006", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "郑木旺", "id": "202512080001", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "技术架构小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "花艳", "id": "202005060005", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ门店组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 7.5, "role": "employee"}, {"name": "董路路", "id": "201612013127", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ门店组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "曾悦平", "id": "201807020068", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "业务中台小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘博宇", "id": "201203020218", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘陈", "id": "201608080004", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "甜品饮料烘焙组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "李江", "id": "199904010202", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.6, "ai_kpi": 7.0, "doc_match": 4.3, "doc_kpi": 12.3, "role": "manager"}, {"name": "王煜云", "id": "202110180002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "孙欢", "id": "202105100005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐本地生活运营部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "马颖涯", "id": "202505260006", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐本地生活运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘逸之", "id": "202509220001", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智运营小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "李晨浩", "id": "202505150001", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "消费者与数智营销小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 9.0, "role": "employee"}, {"name": "李楠", "id": "201004230003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 8.5, "role": "employee"}, {"name": "徐心怡", "id": "202206130002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.7, "ai_kpi": 4.0, "doc_match": 3.5, "doc_kpi": 11.5, "role": "employee"}, {"name": "罗智隆", "id": "202601040002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智门店小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王海花", "id": "Z20190708075", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "付宇佳", "id": "D20190902010", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "卞枭", "id": "Z20210804002", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 3.5, "doc_kpi": 11.5, "role": "employee"}, {"name": "梁美玲", "id": "Z20160314001", "dept4": "大TQ总部", "dept5": "大TQ执行长办公室", "dept6": "大TQ经营企划组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王晴", "id": "Z20190408194", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "姜妍", "id": "200707020001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "文宜南", "id": "202408010003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "经珊", "id": "Z20160118001", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.9, "ai_kpi": 7.0, "doc_match": 3.8, "doc_kpi": 11.8, "role": "employee"}, {"name": "龚旭", "id": "Z20180308001", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 8.5, "role": "employee"}, {"name": "沙云涛", "id": "Z20210607003", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "杨欣", "id": "Z20181217001", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "单海燕", "id": "L200809160001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 2.5, "doc_kpi": 5.5, "role": "employee"}, {"name": "郁文佳", "id": "Z20191029001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘勇", "id": "202311010002", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐营运推进及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 9.8, "role": "employee"}, {"name": "王轶婷", "id": "202508180004", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "庄映虹", "id": "Z20170801001", "dept4": "大TQ总部", "dept5": "大TQ法务及合规部", "dept6": "大TQ法务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘星辰", "id": "201002160001", "dept4": "大TQ总部", "dept5": "大TQ执行长办公室", "dept6": "大TQ经营企划组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "钱骏", "id": "202406060003", "dept4": "餐饮群总部", "dept5": "总经办", "dept6": "计算错误", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "邢艳辉", "id": "200703120001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "赵丹", "id": "202405060006", "dept4": "大TQ总部", "dept5": "大TQ法务及合规部", "dept6": "大TQ合规及内控组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "卞海燕", "id": "Z20231106001", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "张昌荣", "id": "200804260314", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐营运推进及训练部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 2.0, "doc_kpi": 7.0, "role": "employee"}, {"name": "郁欢", "id": "Z20160503001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.0, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 3.5, "role": "employee"}, {"name": "仲菲", "id": "Z20160718016", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 9.5, "role": "employee"}, {"name": "于俊", "id": "201201040331", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智运营小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "李俊", "id": "200711010001", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐开发加盟拓展部", "ai_match": 4.6, "ai_kpi": 7.0, "doc_match": 4.7, "doc_kpi": 9.7, "role": "manager"}, {"name": "韩治刚", "id": "201904240002", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "精料组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王昌宁", "id": "Z20210915005", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "郭震", "id": "Z20210701003", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "江居杰", "id": "Z20240513003", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "郭建伟", "id": "Z20100328001", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "张佳燕", "id": "Z20240701001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘燕傧", "id": "Z20210607002", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "聂艳萍", "id": "Z20210705003", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 4.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "高耀", "id": "L202311130001", "dept4": "大TQ总部", "dept5": "大TQ执行长办公室", "dept6": "大TQ经营企划组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陈丽", "id": "201909020002", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "计算错误", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.8, "doc_kpi": 11.8, "role": "employee"}, {"name": "顾凯莉", "id": "Z20201214008", "dept4": "大TQ总部", "dept5": "大TQ法务及合规部", "dept6": "大TQ合规及内控组", "ai_match": 4.8, "ai_kpi": 4.0, "doc_match": 4.0, "doc_kpi": 9.0, "role": "employee"}, {"name": "潘翔", "id": "202207180001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 2.5, "doc_kpi": 7.5, "role": "employee"}, {"name": "吕韦辰", "id": "T0023", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "计算错误", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "谢春雷", "id": "199709010006", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "俞敏毓", "id": "201706080021", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 9.5, "role": "employee"}, {"name": "金世杰", "id": "202405290001", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 2.5, "doc_kpi": 10.5, "role": "employee"}, {"name": "杨建涛", "id": "201101040003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "张墨琦", "id": "202107120019", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 3.0, "doc_kpi": 11.0, "role": "employee"}, {"name": "张艳莉", "id": "202506160005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐本地生活运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘颖", "id": "Z20171116002", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 2.8, "doc_kpi": 7.8, "role": "employee"}, {"name": "侯万里", "id": "Z20180712001", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ工厂组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "雷婷", "id": "202510130002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐本地生活运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "张梅", "id": "200411010347", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智门店小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "张雪冬", "id": "201804020050", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数据中台小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘云霞", "id": "202308140006", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数据中台小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王馨", "id": "201204160003", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "肖秋勇", "id": "201908260001", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 6.5, "role": "employee"}, {"name": "庞科", "id": "201312280347", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐营运及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "黄红卫", "id": "202512010007", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "研发一组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "张林波", "id": "202403110002", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "袁玉霞", "id": "200608010014", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐营运推进及训练部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 9.5, "role": "employee"}, {"name": "张嘉懿", "id": "202412100001", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.0, "doc_kpi": 6.0, "role": "employee"}, {"name": "丁菲", "id": "202305220011", "dept4": "餐饮群总部", "dept5": "业务洞察分析部", "dept6": "计算错误", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "诸逸婧", "id": "202309040002", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 6.5, "role": "employee"}, {"name": "刘洋", "id": "L202109160001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.3, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "丁成刚", "id": "201607010015", "dept4": "大TQ总部", "dept5": "大TQ法务及合规部", "dept6": "大TQ法务组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "康浩", "id": "202005110002", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.9, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "曹宜婧", "id": "Z20170801002", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 9.5, "role": "employee"}, {"name": "朱婉婷", "id": "Z20180301001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 5.0, "doc_kpi": 13.0, "role": "employee"}, {"name": "张普明", "id": "199912160001", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "甜品饮料烘焙组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "师晓磊", "id": "201010150001", "dept4": "大TQ总部", "dept5": "大TQ执董办公室", "dept6": "计算错误", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "王美琴", "id": "200208010001", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐营运推进及训练部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 3.8, "doc_kpi": 8.8, "role": "manager"}, {"name": "易超", "id": "202309180002", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "邱雅馨", "id": "202505260005", "dept4": "餐饮群总部", "dept5": "业务洞察分析部", "dept6": "计算错误", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "黄雯薇", "id": "202310090001", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "施汉杰", "id": "201202150001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 2.5, "doc_kpi": 10.5, "role": "employee"}, {"name": "董浩志", "id": "202006010003", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "贝瑞研发组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 9.5, "role": "employee"}, {"name": "杨良奎", "id": "201206150001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "徐俊", "id": "201304010008", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐品牌及用户运营部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "赵宏鑫", "id": "202007130004", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "施晨怡", "id": "202205050005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "邰浩宇", "id": "202504210002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "李龙", "id": "Z20240401004", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 2.5, "doc_kpi": 10.5, "role": "employee"}, {"name": "赵园园", "id": "201701160713", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智运营小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陈靖贻", "id": "202404150002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "黄梦婷", "id": "202501020001", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "柳俊秀", "id": "202404150004", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "manager"}, {"name": "和芳瑜", "id": "201011120004", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "朱俊杰", "id": "202407010004", "dept4": "餐饮群总部", "dept5": "业务洞察分析部", "dept6": "计算错误", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 5.0, "doc_kpi": 13.0, "role": "employee"}, {"name": "郭振男", "id": "202508180003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "邱集锐", "id": "202509220002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智门店小组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "姜星辰", "id": "201811010003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "沈学", "id": "202408260002", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "业务中台小组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "贾夕尧", "id": "202510130001", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐用户运营部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "王艳辉", "id": "200411010348", "dept4": "餐饮群总部", "dept5": "数智科技中心", "dept6": "数智后勤小组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "钟鹤翎", "id": "202511170002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "林桃", "id": "201509010002", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "精料组", "ai_match": 4.2, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "方园", "id": "202504230001", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "陈圣杰", "id": "202407010005", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐开发加盟拓展部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "张思敏", "id": "202512150003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 11.5, "role": "employee"}, {"name": "王婷", "id": "200308010001", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "高晓妍", "id": "202405220001", "dept4": "餐饮群总部", "dept5": "业务洞察分析部", "dept6": "计算错误", "ai_match": 4.9, "ai_kpi": 7.0, "doc_match": 5.0, "doc_kpi": 13.0, "role": "employee"}, {"name": "顾军", "id": "202505260003", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "大TQ门店组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陈皖", "id": "Z20210510001", "dept4": "大TQ总部", "dept5": "大TQ财务中心", "dept6": "大TQ账务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王丽婷", "id": "202506270002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 11.5, "role": "employee"}, {"name": "亚尔", "id": "202502100003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 4.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "姚磊", "id": "202403010212", "dept4": "餐饮群总部", "dept5": "总经办", "dept6": "计算错误", "ai_match": 4.6, "ai_kpi": 4.0, "doc_match": 4.3, "doc_kpi": 9.3, "role": "special_manager"}, {"name": "杨杏平", "id": "202306070002", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "王影", "id": "202403180005", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "杨颖蓉", "id": "202106010004", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "熊淑梅", "id": "200205160001", "dept4": "大TQ总部", "dept5": "大TQ执行长办公室", "dept6": "大TQ经营企划组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.4, "doc_kpi": 12.4, "role": "manager"}, {"name": "黄健", "id": "201008040001", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 11.5, "role": "employee"}, {"name": "邓云", "id": "201003280002", "dept4": "大TQ总部", "dept5": "大TQ食品安全中心", "dept6": "计算错误", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.4, "doc_kpi": 12.4, "role": "manager"}, {"name": "方丽堃", "id": "202601040003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "刘扬", "id": "202512010005", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐品牌行销部", "ai_match": 4.3, "ai_kpi": 7.0, "doc_match": 4.3, "doc_kpi": 9.3, "role": "manager"}, {"name": "姬文林", "id": "199912010003", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "张伟", "id": "202512010008", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "陆磊", "id": "202107270001", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 7.5, "role": "employee"}, {"name": "李纯冬", "id": "200004010218", "dept4": "餐饮群总部", "dept5": "西式快餐事业本部", "dept6": "西式快餐开发加盟拓展部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.2, "doc_kpi": 9.2, "role": "manager"}, {"name": "尤优", "id": "202303130001", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "王洁", "id": "200806100001", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "计算错误", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 7.5, "role": "manager"}, {"name": "孙嘉仪", "id": "202512150002", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "大TQ业务支持组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "庞相勇", "id": "199707010266", "dept4": "餐饮群总部", "dept5": "中式快餐事业本部", "dept6": "中式快餐事业本部", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "special_manager"}, {"name": "崔凯军", "id": "199705150001", "dept4": "大TQ总部", "dept5": "大TQ执行长办公室", "dept6": "计算错误", "ai_match": 4.3, "ai_kpi": 7.0, "doc_match": 4.1, "doc_kpi": 12.1, "role": "special_manager"}, {"name": "高敏慈", "id": "T0048", "dept4": "大TQ总部", "dept5": "大TQ人力发展中心", "dept6": "计算错误", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.7, "doc_kpi": 7.7, "role": "employee"}, {"name": "郑宏谟", "id": "T0037", "dept4": "餐饮群总部", "dept5": "研发中心", "dept6": "计算错误", "ai_match": 4.5, "ai_kpi": 4.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "manager"}, {"name": "查姗姗", "id": "202405060007", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业资金组", "ai_match": 4.7, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "胡紫怡", "id": "202505060003", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业资金组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.0, "doc_kpi": 8.0, "role": "employee"}, {"name": "陈玺羽", "id": "201710130027", "dept4": "董事长室", "dept5": "便利餐饮连锁事业战略及经营企划部", "dept6": "便利餐饮连锁事业经营企划组", "ai_match": 1.5, "ai_kpi": 0.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "employee"}, {"name": "葛齐", "id": "201412250001", "dept4": "董事长室", "dept5": "便利餐饮连锁事业战略及经营企划部", "dept6": "便利餐饮连锁事业投资组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "冯荟萃", "id": "202405060008", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业资金组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "张芳芳", "id": "T0028", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "-", "ai_match": 4.2, "ai_kpi": 7.0, "doc_match": 4.0, "doc_kpi": 12.0, "role": "special_manager"}, {"name": "李昊", "id": "202105100007", "dept4": "董事长室", "dept5": "便利餐饮连锁事业社会责任与公共事务组", "dept6": "便利餐饮连锁事业社会责任与公共事务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "李思瑕", "id": "202406170002", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业资金组", "ai_match": 4.2, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "游利亚", "id": "201805020006", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业资金组", "ai_match": 4.5, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "方嘉玲", "id": "202104270003", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业资金组", "ai_match": 4.8, "ai_kpi": 4.0, "doc_match": 4.5, "doc_kpi": 12.5, "role": "employee"}, {"name": "王敏崧", "id": "201707020305", "dept4": "董事长室", "dept5": "便利餐饮连锁事业法务及合规交易部", "dept6": "-", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 3.5, "doc_kpi": 8.5, "role": "manager"}, {"name": "石颖", "id": "201209110342", "dept4": "董事长室", "dept5": "便利餐饮连锁事业法务组", "dept6": "便利餐饮连锁事业法务组", "ai_match": 4.8, "ai_kpi": 7.0, "doc_match": 4.5, "doc_kpi": 7.5, "role": "employee"}, {"name": "杨林芬", "id": "200404010251", "dept4": "董事长室", "dept5": "便利餐饮连锁事业财务部", "dept6": "便利餐饮连锁事业效能效益组", "ai_match": 4.3, "ai_kpi": 7.0, "doc_match": 4.8, "doc_kpi": 12.8, "role": "employee"}, {"name": "史懿晨", "id": "201701090001", "dept4": "董事长室", "dept5": "便利餐饮连锁事业战略及经营企划部", "dept6": "便利餐饮连锁事业投资组", "ai_match": 4.8, "ai_kpi": 4.0, "doc_match": 2.5, "doc_kpi": 10.5, "role": "employee"}, {"name": "李斌", "id": "202510090006", "dept4": "董事长室", "dept5": "便利餐饮连锁事业战略及经营企划部", "dept6": "-", "ai_match": 3.08, "ai_kpi": 3.9, "doc_match": 4.8, "doc_kpi": 12.8, "role": "manager"}, {"name": "常晶晶", "id": "202504070001", "dept4": "董事长室", "dept5": "便利餐饮连锁事业法务及合规交易部", "dept6": "便利餐饮连锁事业合规交易组", "ai_match": null, "ai_kpi": 0.0, "doc_match": null, "doc_kpi": 0.0, "role": "employee"}, {"name": "游仁宏", "id": "201508131080", "dept4": "董事长室", "dept5": "便利餐饮连锁事业整合行销组", "dept6": "便利餐饮连锁事业整合行销组", "ai_match": null, "ai_kpi": 0.0, "doc_match": null, "doc_kpi": 0.0, "role": "employee"}];
+        
+        // 特殊主管管辖范围规则
+        const SPECIAL_MANAGERS = {
+            '庞相勇': { type: 'dept5', value: '中式快餐事业本部' },
+            '姚磊': { type: 'dept4', value: '餐饮群总部' },
+            '崔凯军': { type: 'dept4', value: '大TQ总部' },
+            '张芳芳': { type: 'multi_dept5', value: ['大TQ财务中心', '便利餐饮连锁事业财务部'] }
+        };
+        
+        function doSearch() {
+            const nameVal = document.getElementById('searchName').value.trim();
+            const idVal = document.getElementById('searchId').value.trim();
+            const errorMsg = document.getElementById('errorMsg');
+            const resultBox = document.getElementById('resultBox');
+            
+            // 隐藏错误和结果
+            errorMsg.classList.remove('show');
+            resultBox.classList.remove('show');
+            
+            // 验证输入
+            if (!nameVal) {
+                showError('请输入姓名');
+                return;
+            }
+            if (!idVal) {
+                showError('请输入工号');
+                return;
+            }
+            
+            // 查找匹配记录（姓名和工号必须同时匹配）
+            const matched = DATA.filter(d => d.name === nameVal && d.id === idVal);
+            
+            if (matched.length === 1) {
+                showResult(matched[0]);
+            } else if (matched.length > 1) {
+                showError('存在多条匹配记录，请联系管理员');
+            } else {
+                // 检查是姓名错误还是工号错误
+                const nameExists = DATA.some(d => d.name === nameVal);
+                const idExists = DATA.some(d => d.id === idVal);
+                
+                if (!nameExists && !idExists) {
+                    showError('姓名和工号均不存在');
+                } else if (!nameExists) {
+                    showError('姓名不存在');
+                } else if (!idExists) {
+                    showError('工号不存在');
+                } else {
+                    showError('姓名与工号不匹配');
+                }
+            }
+        }
+        
+        function showError(msg) {
+            const errorMsg = document.getElementById('errorMsg');
+            errorMsg.textContent = msg;
+            errorMsg.classList.add('show');
+        }
+        
+        function showResult(user) {
+            const resultBox = document.getElementById('resultBox');
+            
+            // 显示用户基本信息
+            document.getElementById('userName').textContent = user.name;
+            document.getElementById('userDept').textContent = `${user.dept4} · ${user.dept5}`;
+            
+            // 显示角色
+            let roleText = '';
+            if (user.role === 'special_manager') {
+                roleText = '特殊主管';
+            } else if (user.role === 'manager') {
+                roleText = '主管职';
+            } else {
+                roleText = '非主管职';
+            }
+            document.getElementById('userRole').textContent = roleText;
+            
+            // 显示分数
+            document.getElementById('scoreAiMatch').textContent = formatScore(user.ai_match);
+            document.getElementById('scoreAiKpi').textContent = formatScore(user.ai_kpi);
+            document.getElementById('scoreDocMatch').textContent = formatScore(user.doc_match);
+            document.getElementById('scoreDocKpi').textContent = formatScore(user.doc_kpi);
+            
+            // 处理主管的下属数据
+            const subSection = document.getElementById('subSection');
+            if (user.role === 'manager' || user.role === 'special_manager') {
+                const subordinates = getSubordinates(user);
+                if (subordinates.length > 0) {
+                    document.getElementById('subCount').textContent = subordinates.length + '人';
+                    renderSubordinatesTable(subordinates);
+                    subSection.style.display = 'block';
+                } else {
+                    subSection.style.display = 'none';
+                }
+            } else {
+                subSection.style.display = 'none';
+            }
+            
+            resultBox.classList.add('show');
+        }
+        
+        function formatScore(score) {
+            if (score === null || score === undefined) {
+                return '<span class="null">未提交</span>';
+            }
+            return score.toFixed(2);
+        }
+        
+        function getSubordinates(manager) {
+            // 特殊主管优先处理
+            if (manager.role === 'special_manager' && SPECIAL_MANAGERS[manager.name]) {
+                const rule = SPECIAL_MANAGERS[manager.name];
+                if (rule.type === 'dept4') {
+                    return DATA.filter(d => d.dept4 === rule.value && d.name !== manager.name);
+                } else if (rule.type === 'dept5') {
+                    return DATA.filter(d => d.dept5 === rule.value && d.name !== manager.name);
+                } else if (rule.type === 'multi_dept5') {
+                    return DATA.filter(d => rule.value.includes(d.dept5) && d.name !== manager.name);
+                }
+            }
+            
+            // 常规主管处理
+            if (manager.dept4 === '餐饮群总部') {
+                // 管辖范围：与本人六级部门相同的所有成员
+                return DATA.filter(d => d.dept6 === manager.dept6 && d.name !== manager.name);
+            } else if (manager.dept4 === '大TQ总部') {
+                // 管辖范围：与本人五级部门相同的所有成员
+                return DATA.filter(d => d.dept5 === manager.dept5 && d.name !== manager.name);
+            } else if (manager.dept4 === '董事长室') {
+                // 管辖范围：与本人五级部门相同的所有成员
+                return DATA.filter(d => d.dept5 === manager.dept5 && d.name !== manager.name);
+            }
+            
+            return [];
+        }
+        
+        function renderSubordinatesTable(subordinates) {
+            const tbody = document.getElementById('subTableBody');
+            tbody.innerHTML = '';
+            
+            subordinates.forEach(sub => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${sub.name}</td>
+                    <td>${sub.id}</td>
+                    <td>${sub.dept6 || '-'}</td>
+                    <td>${sub.ai_match !== null ? sub.ai_match.toFixed(2) : '-'}</td>
+                    <td>${sub.ai_kpi !== null ? sub.ai_kpi.toFixed(2) : '-'}</td>
+                    <td>${sub.doc_match !== null ? sub.doc_match.toFixed(2) : '-'}</td>
+                    <td>${sub.doc_kpi !== null ? sub.doc_kpi.toFixed(2) : '-'}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+        
+        // 回车键触发搜索
+        document.getElementById('searchName').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') doSearch();
+        });
+        document.getElementById('searchId').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') doSearch();
+        });
+    </script>
+</body>
+</html>
